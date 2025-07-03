@@ -11,9 +11,10 @@ Special parts have been used here
  - ams1117 voltage regulator (3.3v) 
  - LDS01RR 3D box
 
-## Two python files
-  - restLirda.py it rest appi, make json file http://localhost:5000/api/lidar
-  - Open3DView.py it maka Open3D view
+## 3 python files
+  - [restLirda.py](restLirda.py) it rest appi, make json file http://localhost:5000/api/lidar  (use serialport)
+  - [Open3dUseRestClient.py](Open3dUseRestClient.py) Open3d viev remote (use rest api) 
+  - [Open3DView.py](Open3DView.py) it make Open3D view (use serialport)
 
 <img src="image/9a867f34-2464-4919-b24e-d5d38ede6a18.jpg" alt="Open3D" width="900"/>
    
