@@ -1,13 +1,14 @@
 
 # Xiaomi_LDS01RR
 Xiaomi LDS01RR LiDAR Library for Python
-#Overview
-This is a simple Lidar python library.
+
+# Overview
+This is a simple Lidar python library. The sensor provides 0-360 degrees measurement data and signal strength. In addition, the motor speed. The motor should rotate at a speed of 300 ppm, I have noticed that it is achieved with a voltage of 3.3v.
 
 Special parts have been used here
  - Xiaomi LDS01RR
  - USB ESP8266 ESP-01 CH340G programmer
- - ams1117 voltage regulator
+ - ams1117 voltage regulator (3.3v) 
  - LDS01RR 3D box
 
 ## Two python files
