@@ -151,8 +151,8 @@ class Visualizer:
         if not valid:
             return
             
-        # Muuta kulmat vastapäivään kääntyviksi (peilikuvan korjaus)
-        angles = np.radians([-p['angle'] for p in valid])  # Lisää miinusmerkki tähän
+        # Oikea kulmalaskenta: käännä vain 90 astetta myötäpäivään
+        angles = np.radians([-p['angle'] + 90 for p in valid])  # Muutettu miinusmerkki ja -90°
         distances = np.array([p['distance'] for p in valid]) / 1000.0  # mm -> m
         x = distances * np.cos(angles)
         y = distances * np.sin(angles)
@@ -163,15 +163,15 @@ class Visualizer:
         
         # Create point cloud (white points)
         self.pcd.points = o3d.utility.Vector3dVector(points)
-        self.pcd.colors = o3d.utility.Vector3dVector(np.ones((len(points), 3)))  # White - KORJATTU
+        self.pcd.colors = o3d.utility.Vector3dVector(np.ones((len(points), 3)))  # White
         
         # Create origin point (red point)
         origin_point = o3d.geometry.PointCloud()
         origin_point.points = o3d.utility.Vector3dVector([[0, 0, 0]])
         origin_point.colors = o3d.utility.Vector3dVector([[1, 0, 0]])  # Red
         
-        # Create direction line (blue)
-        line_points = np.array([[0, 0, 0], [0.2, 0.0, 0]])  # 20 cm line
+        # Create direction line (blue) - osoittaa ylös (0, 0.2, 0)
+        line_points = np.array([[0, 0, 0], [0, 0.2, 0]])  # 20 cm ylöspäin
         line = o3d.geometry.LineSet(
             points=o3d.utility.Vector3dVector(line_points),
             lines=o3d.utility.Vector2iVector([[0, 1]]),
@@ -189,13 +189,13 @@ class Visualizer:
         else:
             self.vis.update_geometry(self.pcd)
             self.vis.update_geometry(origin_point)
+            self.vis.update_geometry(line)
             # Update distance circles
             for circle in self.distance_circles:
                 self.vis.update_geometry(circle)
             
         self.vis.poll_events()
         self.vis.update_renderer()
-
 if __name__ == "__main__":
     print("🔄 Starting real-time visualization...")
     
