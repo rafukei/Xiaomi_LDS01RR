@@ -20,13 +20,19 @@ Special parts have been used here
 
 # Connection of terminals
 
-| USB | LDS01RR |
-|---|----|
+| USB ESP8266 ESP-01 | LDS01RR |
+|--------------------|----|
 | 0v | T11 |
 | 3.3V | T3 | 
 | RX | in the middle left connector, you can see three pins on the left if you look closely. |
 
 Connect the ams1117 regulator USB 5v direct drive and take the wires to the motors, motor +3.3v(red) and 0v (black)
+
+|USB | ams1117 | LDS01RR motor |
+|----|---------|-------|
+| +5v | pin 3 |  |
+| 0v | pin 1 | black |
+| | pin 2 | red |
 
 <img src="image/07bdcde2-94d1-4182-84c7-9d42f327a241.jpg" alt="connection of terminals" width="300"/>
 
