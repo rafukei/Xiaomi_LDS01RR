@@ -151,17 +151,19 @@ class Visualizer:
         if not valid:
             return
             
-        angles = np.radians([p['angle'] for p in valid])
+        # Muuta kulmat vastapäivään kääntyviksi (peilikuvan korjaus)
+        angles = np.radians([-p['angle'] for p in valid])  # Lisää miinusmerkki tähän
         distances = np.array([p['distance'] for p in valid]) / 1000.0  # mm -> m
         x = distances * np.cos(angles)
         y = distances * np.sin(angles)
+
         z = np.zeros_like(x)
 
         points = np.vstack((x, y, z)).T
         
         # Create point cloud (white points)
         self.pcd.points = o3d.utility.Vector3dVector(points)
-        self.pcd.colors = o3d.utility.Vector3dVector(np.ones((len(points), 3)))  # White
+        self.pcd.colors = o3d.utility.Vector3dVector(np.ones((len(points), 3)))  # White - KORJATTU
         
         # Create origin point (red point)
         origin_point = o3d.geometry.PointCloud()
@@ -169,7 +171,7 @@ class Visualizer:
         origin_point.colors = o3d.utility.Vector3dVector([[1, 0, 0]])  # Red
         
         # Create direction line (blue)
-        line_points = np.array([[0, 0, 0], [0.2, 0, 0]])  # 20 cm line
+        line_points = np.array([[0, 0, 0], [0.2, 0.0, 0]])  # 20 cm line
         line = o3d.geometry.LineSet(
             points=o3d.utility.Vector3dVector(line_points),
             lines=o3d.utility.Vector2iVector([[0, 1]]),
