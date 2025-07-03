@@ -5,6 +5,7 @@ import open3d as o3d
 import time
 import threading
 from queue import Queue
+import math
 
 class NeatoXV11:
     def __init__(self, port='/dev/ttyUSB0', baudrate=115200):
@@ -94,13 +95,57 @@ class Visualizer:
         self.pcd = o3d.geometry.PointCloud()
         self.first_run = True
         # Zoom settings
-        # Get camera settings and remove zoom limits
         self.ctr = self.vis.get_view_control()
-        self.ctr.set_constant_z_far(100000)  # Set very large value (e.g. 100km)
-        self.ctr.set_constant_z_near(0.001)   # Smallest possible near distance
+        self.ctr.set_constant_z_far(100000)
+        self.ctr.set_constant_z_near(0.001)
         # Dark theme
         opt = self.vis.get_render_option()
-        opt.background_color = np.array([0.1, 0.1, 0.1])  # Dark gray
+        opt.background_color = np.array([0.1, 0.1, 0.1])
+        
+        # Create distance circles
+        self.distance_circles = []
+        self._create_distance_circles()
+        
+    def _create_distance_circle(self, radius, color, segments=100):
+        circle = o3d.geometry.LineSet()
+        points = []
+        lines = []
+        
+        for i in range(segments):
+            angle = 2 * math.pi * i / segments
+            x = radius * math.cos(angle)
+            y = radius * math.sin(angle)
+            points.append([x, y, 0])
+            
+            if i > 0:
+                lines.append([i-1, i])
+        # Close the circle
+        lines.append([segments-1, 0])
+        
+        circle.points = o3d.utility.Vector3dVector(points)
+        circle.lines = o3d.utility.Vector2iVector(lines)
+        circle.colors = o3d.utility.Vector3dVector([color for _ in range(len(lines))])
+        
+        return circle
+    
+    def _create_distance_circles(self):
+        max_distance = 7
+        dark_gray = [0.2, 0.2, 0.2]
+        purple = [0.6, 0.2, 0.6]
+        
+        # Create set of radii for purple circles for faster lookups
+        purple_radii = {round(r, 1) for r in np.arange(0.0, max_distance + 0.1, 1.0)}
+        
+        # Create all circles
+        for r in np.arange(0.1, max_distance + 0.01, 0.1):
+            rounded_r = round(r, 1)  # Avoid floating point precision issues
+            if rounded_r in purple_radii:
+                # Add purple circle (skip gray)
+                circle = self._create_distance_circle(r, purple)
+            else:
+                # Add gray circle
+                circle = self._create_distance_circle(r, dark_gray)
+            self.distance_circles.append(circle)
     def update_visualization(self, scan):
         valid = [p for p in scan if not p['invalid'] and p['distance'] > 0]
         if not valid:
@@ -135,10 +180,16 @@ class Visualizer:
             self.vis.add_geometry(self.pcd)
             self.vis.add_geometry(origin_point)
             self.vis.add_geometry(line)
+            # Add distance circles
+            for circle in self.distance_circles:
+                self.vis.add_geometry(circle)
             self.first_run = False
         else:
             self.vis.update_geometry(self.pcd)
-            self.vis.update_geometry(origin_point)  # Also update the point
+            self.vis.update_geometry(origin_point)
+            # Update distance circles
+            for circle in self.distance_circles:
+                self.vis.update_geometry(circle)
             
         self.vis.poll_events()
         self.vis.update_renderer()
