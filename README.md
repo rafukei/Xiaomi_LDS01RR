@@ -15,7 +15,7 @@ Special parts have been used here
   - restLirda.py it rest appi, make json file http://localhost:5000/api/lidar
   - Open3DView.py it maka Open3D view
 
-<img src="image/6a64d3cd-76ed-405c-9f6e-53b13a50f655.jpg" alt="Open3D" width="600"/>
+<img src="image/9a867f34-2464-4919-b24e-d5d38ede6a18.jpg" alt="Open3D" width="900"/>
    
 <img src="image/7052813d-c442-479a-aae5-e17e93e5bc7a.jpg" alt="LDS01RR" width="300"/>
 
